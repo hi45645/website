@@ -1,0 +1,55 @@
+name: Clinic application checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: clinic_test
+          POSTGRES_USER: clinic_ci
+          POSTGRES_PASSWORD: clinic_ci
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U clinic_ci -d clinic_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 12
+
+    env:
+      TEST_DATABASE_URL: postgresql://clinic_ci:clinic_ci@127.0.0.1:55432/clinic_test
+      TEST_DIRECT_URL: postgresql://clinic_ci:clinic_ci@127.0.0.1:55432/clinic_test
+      NEXT_TELEMETRY_DISABLED: "1"
+
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "24.x"
+          cache: npm
+      - run: npm ci
+      - run: npm run db:generate
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test:unit
+      - run: DATABASE_URL="$TEST_DATABASE_URL" DIRECT_URL="$TEST_DIRECT_URL" npm run db:migrate
+        name: Migrate the isolated test database
+      - run: npm run test:integration
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm run build
+      - run: npm run test:e2e
+        name: Smoke-test the production build
+        env:
+          TEST_RUN_MODE: production
+      - run: npm audit --audit-level=high

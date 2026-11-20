@@ -1,0 +1,155 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum AppointmentCategory {
+  SKIN
+  DIABETES
+}
+
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum NotificationStatus {
+  NOT_CONFIGURED
+  PENDING
+  ACCEPTED
+  FAILED
+  UNKNOWN
+}
+
+model Appointment {
+  id                 String               @id @default(cuid())
+  reference          String               @unique
+  idempotencyKey     String               @unique
+  name               String
+  mobile             String
+  preferredDate      String
+  timeWindow         String
+  category           AppointmentCategory
+  status             AppointmentStatus    @default(PENDING)
+  scheduledDate      String?
+  scheduledTime      String?
+  notes              String?
+  notificationStatus NotificationStatus   @default(NOT_CONFIGURED)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  auditLogs          AuditLog[]
+
+  @@index([status, scheduledDate, scheduledTime])
+  @@index([status, createdAt])
+  @@index([createdAt])
+}
+
+model ClinicSettings {
+  id             Int      @id @default(1)
+  workingHours   Json
+  blockedDates   String[]
+  slotDuration   Int
+  capacity       Int
+  retentionDays  Int
+  phone          String
+  address        String
+  homeIntro      String
+  about          String
+  skinCare       String
+  diabetesCare   String
+  privacyContact String
+  updatedAt      DateTime @updatedAt
+}
+
+model AuditLog {
+  id            String       @id @default(cuid())
+  actorId       String
+  action        String
+  appointmentId String?
+  details       Json?
+  createdAt     DateTime     @default(now())
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId, createdAt])
+  @@index([createdAt])
+}
+
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  expiresAt DateTime
+
+  @@index([expiresAt])
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String    @default("USER")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@unique([providerId, accountId])
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
