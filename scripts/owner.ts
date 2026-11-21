@@ -9,7 +9,7 @@ import { provisionOwner } from "../src/lib/owner";
 async function ask(prompt: string, hidden = false) {
   const output = hidden ? new Writable({ write(_chunk, _encoding, callback) { callback(); } }) : stdout;
   const terminal = createInterface({ input: stdin, output, terminal: true });
-  const abort = new AbortController();
+  const abort = new AbortController();hh
   terminal.once("SIGINT", () => abort.abort());
   if (hidden) stdout.write(prompt);
   try {
