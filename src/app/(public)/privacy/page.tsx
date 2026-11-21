@@ -18,6 +18,7 @@ export default async function PrivacyPage() {
         <div className="clinic-prose">
           <h2>Information collected</h2>
           <p>The appointment form collects your name, mobile number, preferred date and time window, and your choice of skin care or diabetes care. The site creates a request reference. On Vercel, it uses a short-lived identifier derived from your network address to limit repeated or automated submissions.</p>
+          <p>If you choose WhatsApp, your message is sent through WhatsApp when you tap Send there. Avoid sharing medical records or other sensitive details in the chat.</p>
           <h2>How the clinic uses it</h2>
           <p>Authorised clinic staff use your request to contact you, arrange your visit, and update the appointment status. Staff can add scheduling notes. If email alerts are enabled, they direct staff to sign in to the dashboard to review new requests.</p>
           <h2>Retention and deletion</h2>

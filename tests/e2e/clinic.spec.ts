@@ -73,6 +73,10 @@ test("public pages, clinic contact links, and mobile keyboard navigation", async
 test("appointment submission is persisted and can be managed through owner login", async ({ page }) => {
   const preferredDate = dateAhead(14);
   await page.goto("/appointment");
+  const whatsapp = new URL((await page.getByRole("link", { name: "Send on WhatsApp" }).getAttribute("href"))!);
+  expect(whatsapp.origin + whatsapp.pathname).toBe("https://wa.me/919916731170");
+  expect(whatsapp.searchParams.get("text")).toContain("request an appointment");
+  await page.getByRole("link", { name: "Use the online appointment form" }).click();
   await page.getByLabel(/patient name/i).fill("Synthetic Browser Patient");
   await page.getByLabel(/mobile number/i).fill("+919000000002");
   await page.getByLabel(/preferred date/i).fill(preferredDate);

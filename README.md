@@ -1,6 +1,6 @@
 # Dr Rangarao Skin and Diabetic Care Center
 
-Clinic information and appointment requests for skin and diabetes care in Chintamani. The public form creates a pending request. Clinic staff use the protected dashboard to manage requests and contact patients to confirm availability.
+Clinic information and appointment requests for skin and diabetes care in Chintamani. The appointment page opens WhatsApp with a draft enquiry. When PostgreSQL is configured, the page also links to an online form that creates a pending request. Clinic staff use the protected dashboard to manage requests and contact patients to confirm availability.
 
 ## Run locally with Docker Compose
 

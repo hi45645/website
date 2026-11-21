@@ -6,7 +6,7 @@
 - [ ] Verify this exact source address and confirm the spelling of **Thiyosopicapal Society**. Rangarao Building, Polytechnic Road, opp. Thiyosopicapal Society, KR Extension, Chintamani, Karnataka 563125, India.
 - [ ] Open the Google Maps directions link and check where it leads.
 - [ ] Approve the skin care and diabetes care descriptions. Supply verified clinician details, consultation fees, specific services, authentic photos, and consent only if you want to publish those later.
-- [ ] Confirm whether the clinic offers WhatsApp appointments before requesting a WhatsApp feature.
+- [ ] Verify that the appointment WhatsApp link reaches the clinic number and that staff monitor incoming messages.
 - [ ] Verify any rating independently and approve its publication before requesting that it be shown.
 
 ## Define how appointments are handled
